@@ -36,8 +36,8 @@ def main():
             'Development Status :: 3 - Alpha',
             'Programming Language :: Python :: 3',
         ],
-        packages=find_packages(where='.'),
-        package_dir={'': '.'},
+        packages=find_packages(where='src'),
+        package_dir={'': 'src'},
         scripts=[
             'bin/meteogargano_backend',
         ],

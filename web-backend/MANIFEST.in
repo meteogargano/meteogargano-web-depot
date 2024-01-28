@@ -1,0 +1,3 @@
+include src/meteogargano_backend/data/static/*.*
+include src/meteogargano_backend/data/templates/*.html 
+include src/meteogargano_backend/data/__version__

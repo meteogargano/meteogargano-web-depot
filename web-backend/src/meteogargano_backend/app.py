@@ -14,6 +14,9 @@ NAME = "meteogargano_backend"
 class Application:
 
     def main(self):
+        with open(os.path.join(resources.files(data),
+                                "static/index2.html"), "r") as f:
+            print(f.readlines()[0])
 
         with open(os.path.join(resources.files(data),
                                 "__version__"), "r") as f:
