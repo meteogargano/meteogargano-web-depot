@@ -23,66 +23,37 @@ NAME = "meteogargano_backend"
 
 app = FastAPI()
 
-class Application:
+with open(os.path.join(resources.files(data),
+                        "__version__"), "r") as f:
+    version = f.readlines()[0].strip()
 
-    def __init__(self):
-        with open(os.path.join(resources.files(data),
-                                "static/index.html"), "r") as f:
-            print(f.readlines()[0])
+logging.basicConfig(
+    stream=sys.stderr, level="DEBUG",
+    format="[%(asctime)s]%(levelname)s %(funcName)s() "
+            "%(filename)s:%(lineno)d %(message)s")
 
-        with open(os.path.join(resources.files(data),
-                                "__version__"), "r") as f:
-            version = f.readlines()[0].strip()
 
-        parser = argparse.ArgumentParser(
-            prog=f"{NAME}",
-            description=DESCRIPTION,
-            formatter_class=argparse.RawDescriptionHelpFormatter)
+config_path = os.environ.get("CONFIG_PATH")
 
-        parser.add_argument("-v", "--verbosity",
-                            action="count",
-                            help="increase output verbosity")
+assert config_path is not None, "CONFIG_PATH env variable not set."
 
-        parser.add_argument(dest="config",
-                            help="config file path")
+try:
+    with open(config_path, "r") as f:
+        settings_dict = json.load(f)
+except BaseException as e:
+    logging.error("unable to load config file")
+    traceback.print_exc(file=sys.stderr)
+    raise e
 
-        args = parser.parse_args()
 
-        logging.basicConfig(
-            stream=sys.stderr, level="DEBUG",
-            format="[%(asctime)s]%(levelname)s %(funcName)s() "
-                    "%(filename)s:%(lineno)d %(message)s")
+@app.get("/",  response_class=FileResponse)
+def index() -> FileResponse:
+    return FileResponse(os.path.join(resources.files(data), "static",
+                                        "index.html"), media_type="html")
 
-        try:
-            with open(args.config, "r") as f:
-                settings_dict = json.load(f)
-        except BaseException as e:
-            logging.error("unable to load config file")
-            traceback.print_exc(file=sys.stderr)
-            raise e
-
-        self.app = FastAPI()
-
-    async def serve(self):
-        app: FastAPI = self.app
-
-        @app.get("/",  response_class=FileResponse)
-        def index() -> FileResponse:
-            return FileResponse(os.path.join(resources.files(data), "static",
-                                             "index.html"), media_type="html")
-
-        # serve
-        config = uvicorn.Config(app, host="127.0.0.1", port=8000)
-        server = uvicorn.Server(config)
-        await server.serve()
-
-    @app.get("/")
-    def read_root():
-        return {"Hello": "World"}
 
 def main():
-    instance = Application()
-    asyncio.run(instance.serve())
+    uvicorn.run(app)
 
 if __name__ == "__main__":
     main()

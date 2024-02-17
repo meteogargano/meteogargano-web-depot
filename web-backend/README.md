@@ -19,6 +19,11 @@ Prerequisiti: python>=3.9
 >     $ pip install -e ./
 
 4. Run:
->     $ (. ${VIRTENV_ROOT}/bin/meteogargano-backend)
+>     $ CONFIG_PATH="test_env/config.json" meteogargano_backend
+
+or:
+
+>     $ CONFIG_PATH="test_env/config.json" uvicorn meteogargano_backend.app:app
+
 
 ## Notes
