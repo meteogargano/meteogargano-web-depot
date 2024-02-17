@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-from meteogargano_backend.app import Application
+from meteogargano_backend.app import main
 
-Application().main()
+main()

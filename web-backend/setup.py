@@ -48,6 +48,8 @@ def main():
             'uvicorn',
             'ninja2',
             'python-multipart',
+            'sqlalchemy',
+            'FastAPI'
         ],
         
         include_package_data=True, 
